@@ -105,7 +105,7 @@ async def load_cases_data(data_list):
 
 async def main():
   Supabase = Database()
-  count = 50
+  count = 25
   data_list = []
   try:
     while count > 0:

@@ -24,18 +24,15 @@ class Database:
 
   async def load_temp_data(self, data_list, i):
     try:
-      # print(data_list[0]['temp_table_vals'])
       self.client.table('templates').insert(data_list[i]['temp_table_vals']).execute()
     except Exception as e:
       print(e)
 
   async def load_rule_data(self, data_list, i):
     try:
-      print(data_list[0]['rule_table_vals'])
       self.client.table('rules').insert(data_list[i]['rule_table_vals']).execute()
     except Exception as e:
       print(e)
-
 class Template:
   def __init__(self) -> None:
     self.temp_id = str("T"+ str(fake.unique.random_number(digits=7)))
@@ -49,8 +46,11 @@ class Template:
     self.temp_last_modified_by = random.choice([self.temp_created_by, fake.first_name() + ' ' + fake.last_name() + ' ' + '('+str(fake.random_number(digits=4))+')'])
     self.temp_last_date_modified = str(fake.date_between(self.temp_gen_creation_date))
     self.temp_cc_recipients = self.temp_last_modified_by
-    self.temp_subject = 'An Update on Your Case Status'
     self.temp_active = random.choice(['True', 'False'])
+    if self.type == 'Email':
+      self.temp_subject = 'An Update on Your Case Status'
+    else:
+      self.temp_subject = 'N/A'
     
     self.rule_id = str("R"+ str(fake.unique.random_number(digits=7)))
     self.rule_last_modified_by = random.choice([self.temp_created_by, fake.first_name() + ' ' + fake.last_name() + ' ' + '('+str(fake.random_number(digits=4))+')'])
@@ -61,7 +61,7 @@ class Template:
 
     self.temp_name = str(self.rule_status + ' ' + '(' + self.type + ')')
     self.temp_message_content = f'Your case status has been updated to {self.rule_status}. ' + \
-    f'Please visit www.{self.police_department.lower()}.org for more information'
+    f'Please visit www.{self.police_department.lower().replace(' ', '')}.org for more information'
     self.rule_then = str('Send ' + self.type + ' to victims in case using ' + self.temp_name)
     
 async def gen_data(data_list):
